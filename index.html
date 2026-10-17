@@ -1,0 +1,736 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ESEP: сталь или алюминий</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Onest:wght@300;400;500;700&display=swap">
+<style>
+/* Layout: тёмно-синий герой с объёмным 3D-орнаментом «қошқар мүйіз», дальше светлые «пластилиновые» карточки.
+   Толстый Unbounded для заголовков и цифр, тонкий Onest 300 для текста. Цвета: небесно-голубой, тёмно-синий, жёлтый. */
+:root{
+  --sky:#38b6f0; --sky-2:#8fd8fb; --navy:#0b1f4d; --navy-2:#163a86; --sun:#ffc629; --sun-2:#e09a00;
+  --bg:#eaf4fb; --card:#ffffff; --ink:#0b1f4d; --soft:#4d6286; --line:#d4e3f1; --steel:#8793a6;
+  --good:#16935a; --warn:#c77b00; --bad:#cf3b31;
+  --display:"Unbounded","Arial Black",system-ui,sans-serif;
+  --text:"Onest",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --clay:inset 0 2px 0 rgba(255,255,255,.9),inset 0 -3px 0 rgba(11,31,77,.06),0 24px 48px -26px rgba(11,31,77,.45),0 3px 8px rgba(11,31,77,.08);
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#061433; --card:#0e2552; --ink:#eaf4ff; --soft:#a9bddb; --line:#1d3a70; --steel:#a3afc2;
+  --good:#45c98a; --warn:#f0b24a; --bad:#ff7466;
+  --clay:inset 0 1px 0 rgba(255,255,255,.08),inset 0 -3px 0 rgba(0,0,0,.25),0 24px 48px -26px rgba(0,0,0,.8),0 3px 8px rgba(0,0,0,.3); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#061433; --card:#0e2552; --ink:#eaf4ff; --soft:#a9bddb; --line:#1d3a70; --steel:#a3afc2;
+  --good:#45c98a; --warn:#f0b24a; --bad:#ff7466;
+  --clay:inset 0 1px 0 rgba(255,255,255,.08),inset 0 -3px 0 rgba(0,0,0,.25),0 24px 48px -26px rgba(0,0,0,.8),0 3px 8px rgba(0,0,0,.3); color-scheme:dark}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--text);font-weight:300;font-size:17px;line-height:1.6}
+.gut{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:1200px;margin:0 auto}
+h1,h2,h3{font-family:var(--display);margin:0;line-height:1.08;text-wrap:balance}
+p{margin:0}
+b,strong{font-weight:700}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--sun);outline-offset:3px;border-radius:6px}
+
+/* NAV */
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--navy)}
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:rgba(11,31,77,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:12px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:#fff;font-family:var(--display);font-weight:900;font-size:22px;letter-spacing:.02em}
+.logo svg{width:38px;height:26px}
+.links{display:flex;gap:4px;flex-wrap:wrap}
+.links a{color:#cfe6ff;text-decoration:none;font-weight:500;font-size:15px;padding:6px 10px;border-radius:999px}
+.links a:hover{background:rgba(255,255,255,.1);color:#fff}
+@media (max-width:860px){.links{display:none}}
+.lang{display:flex;background:rgba(255,255,255,.1);border-radius:999px;padding:3px;gap:2px}
+.lang button{font:inherit;font-family:var(--display);font-weight:700;font-size:13px;border:0;border-radius:999px;padding:6px 12px;background:transparent;color:#cfe6ff;cursor:pointer}
+.lang button[aria-pressed="true"]{background:var(--sun);color:var(--navy);box-shadow:inset 0 -2px 0 var(--sun-2)}
+
+/* HERO */
+.hero{background:radial-gradient(120% 90% at 85% 30%,#1d4fae 0%,var(--navy) 55%,#071433 100%);color:#fff;border-radius:0 0 40px 40px;overflow:hidden;position:relative}
+.hero .wrap{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:24px;align-items:center;padding-block:40px 48px}
+@media (max-width:900px){.hero .wrap{grid-template-columns:minmax(0,1fr);padding-block:24px 36px}}
+.kicker{color:var(--sky-2);font-weight:400;font-size:15px}
+.hero h1{font-weight:900;font-size:clamp(34px,5.4vw,66px);line-height:1.02;margin-top:14px;letter-spacing:-.01em}
+.hero .sub{margin-top:18px;font-size:clamp(17px,1.6vw,20px);font-weight:300;color:#d6e8ff;max-width:52ch}
+.esep{margin-top:14px;font-size:14px;color:var(--sky-2)}
+.esep b{font-family:var(--display);color:var(--sun)}
+.cta{display:inline-flex;margin-top:24px;font-family:var(--display);font-weight:700;font-size:15px;color:var(--navy);text-decoration:none;background:linear-gradient(180deg,#ffd75a,var(--sun));padding:14px 22px;border-radius:16px;box-shadow:inset 0 2px 0 rgba(255,255,255,.6),0 6px 0 var(--sun-2),0 18px 30px -12px rgba(0,0,0,.5);transition:transform .12s,box-shadow .12s}
+.cta:active{transform:translateY(4px);box-shadow:inset 0 2px 0 rgba(255,255,255,.6),0 2px 0 var(--sun-2),0 8px 16px -10px rgba(0,0,0,.5)}
+.orn3d{position:relative;aspect-ratio:1/1;max-width:540px;width:100%;justify-self:center}
+.orn3d canvas,.orn3d svg{position:absolute;inset:0;width:100%;height:100%}
+@media (max-width:900px){.orn3d{max-width:300px;order:-1}}
+.claims{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:8px}
+@media (max-width:640px){.claims{grid-template-columns:minmax(0,1fr)}}
+.claim{border-radius:22px;padding:18px 20px;background:linear-gradient(180deg,rgba(255,255,255,.14),rgba(255,255,255,.05));box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 20px 40px -24px rgba(0,0,0,.6);display:flex;flex-direction:column;gap:4px}
+.claim .n{font-family:var(--display);font-weight:900;font-size:clamp(28px,3.4vw,40px);line-height:1;white-space:nowrap}
+.claim .t{font-size:14px;color:#cfe2ff;line-height:1.4}
+.claim.c1 .n{color:#c9d6ea} .claim.c2 .n{color:var(--sky-2)} .claim.c3 .n{color:var(--sun)}
+
+/* SECTIONS */
+main{display:flex;flex-direction:column;gap:88px;padding-block:72px 40px}
+section{scroll-margin-top:80px}
+.sh{display:grid;grid-template-columns:auto minmax(0,1fr);gap:22px;align-items:center;margin-bottom:30px}
+.num{font-family:var(--display);font-weight:900;font-size:clamp(56px,8vw,96px);line-height:.9;color:var(--sky);
+  text-shadow:1px 1px 0 var(--navy-2),2px 2px 0 var(--navy-2),3px 3px 0 var(--navy-2),4px 4px 0 var(--navy-2),5px 5px 0 var(--navy-2),6px 6px 0 var(--navy-2),8px 14px 22px rgba(11,31,77,.35)}
+.sh .lbl{font-family:var(--display);font-weight:700;font-size:14px;color:var(--sun-2)}
+.sh h2{font-weight:900;font-size:clamp(26px,3.6vw,44px);margin-top:4px}
+.sh p{color:var(--soft);margin-top:8px;max-width:64ch}
+@media (max-width:560px){.sh{grid-template-columns:minmax(0,1fr);gap:8px}}
+.card{background:var(--card);border-radius:26px;box-shadow:var(--clay);padding:22px;min-width:0}
+.small{font-size:14px;color:var(--soft);line-height:1.45}
+.divider{display:block;width:100%;height:44px;max-width:1200px;margin:0 auto}
+
+/* 01 */
+.trains{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media (max-width:700px){.trains{grid-template-columns:minmax(0,1fr)}}
+.tc{display:flex;flex-direction:column;gap:12px;position:relative;overflow:hidden}
+.tc h3{font-weight:900;font-size:22px}
+.tc.al h3{color:var(--sky)} .tc.st h3{color:var(--steel)}
+.tc .mass{font-family:var(--display);font-weight:900;font-size:56px;line-height:1;color:var(--ink)}
+.tc .mass span{font-size:22px;font-weight:500;color:var(--soft)}
+.tc dl{display:grid;grid-template-columns:auto 1fr;gap:4px 16px;margin:0}
+.tc dt{color:var(--soft)} .tc dd{margin:0;font-weight:500}
+.coach{width:100%;height:auto;display:block;margin-top:6px}
+.conds{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0}
+.chip{background:var(--card);border-radius:999px;padding:8px 16px;box-shadow:var(--clay);font-size:15px;font-weight:400}
+.chip b{font-family:var(--display);font-weight:700}
+.parts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+@media (max-width:980px){.parts{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:500px){.parts{grid-template-columns:minmax(0,1fr)}}
+.part{display:flex;flex-direction:column;gap:14px}
+.part h3{font-weight:700;font-size:16px;color:var(--sky)}
+.r .v{font-family:var(--display);font-weight:700;font-size:clamp(19px,1.9vw,23px);line-height:1.15;font-variant-numeric:tabular-nums}
+.r .l{font-size:14px;color:var(--soft);line-height:1.35}
+.note{margin-top:14px}
+
+/* 02 */
+.prob{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:900px){.prob{grid-template-columns:minmax(0,1fr)}}
+.prob h3{font-weight:700;font-size:17px;margin-bottom:8px}
+svg.chart{display:block;width:100%;height:auto;overflow:visible}
+svg.chart text{font-family:var(--text);font-size:20px;fill:var(--soft)}
+.reasons{display:flex;flex-direction:column;gap:16px}
+.reason{display:grid;grid-template-columns:52px minmax(0,1fr);gap:14px;align-items:start}
+.reason svg{width:52px;height:52px}
+.reason h3{font-weight:700;font-size:17px;margin-bottom:4px}
+.reason p{color:var(--soft);font-size:16px}
+
+/* 03 */
+.sim{display:grid;grid-template-columns:minmax(270px,330px) minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:960px){.sim{grid-template-columns:minmax(0,1fr)}}
+.pult{display:flex;flex-direction:column;gap:14px}
+.f{display:flex;flex-direction:column;gap:6px}
+.f label{display:flex;justify-content:space-between;gap:8px;font-size:15px;color:var(--soft)}
+.f output{font-family:var(--display);font-weight:700;font-size:14px;color:var(--ink);white-space:nowrap}
+select,input[type=number]{width:100%;font:inherit;font-weight:500;font-size:15px;padding:10px 12px;border:0;border-radius:14px;background:var(--bg);color:var(--ink);box-shadow:inset 0 2px 5px rgba(11,31,77,.12)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:12px;border-radius:999px;background:var(--bg);box-shadow:inset 0 2px 4px rgba(11,31,77,.18);margin:6px 0}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff 0 12%,var(--sky-2) 25%,var(--sky) 60%,var(--navy-2) 100%);box-shadow:0 4px 8px rgba(11,31,77,.35);cursor:pointer;border:0}
+input[type=range]::-moz-range-thumb{width:26px;height:26px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff 0 12%,var(--sky-2) 25%,var(--sky) 60%,var(--navy-2) 100%);box-shadow:0 4px 8px rgba(11,31,77,.35);cursor:pointer;border:0}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sep{border:0;height:1px;background:var(--line);margin:4px 0}
+.board{display:flex;flex-direction:column;gap:18px;min-width:0}
+.verdict{display:flex;gap:18px;align-items:center;border-radius:26px;padding:20px 22px;color:#fff;background:linear-gradient(135deg,var(--v1),var(--v2));box-shadow:inset 0 2px 0 rgba(255,255,255,.3),0 24px 40px -22px var(--v2)}
+.verdict .ic{flex:none;width:58px;height:58px;border-radius:50%;background:rgba(255,255,255,.2);display:grid;place-items:center;font-family:var(--display);font-weight:900;font-size:28px;box-shadow:inset 0 2px 0 rgba(255,255,255,.35)}
+.verdict .big{font-family:var(--display);font-weight:900;font-size:clamp(20px,2.4vw,28px);line-height:1.15}
+.verdict .why{opacity:.95;margin-top:4px;font-size:16px}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+@media (max-width:700px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.kpi{padding:16px;display:flex;flex-direction:column;gap:2px}
+.kpi .k{font-size:14px;color:var(--soft)}
+.kpi .v{font-family:var(--display);font-weight:900;font-size:clamp(18px,2.1vw,25px);white-space:nowrap}
+.kpi .s{font-size:13px;color:var(--soft);line-height:1.3}
+.runhead{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px}
+.runhead h3,.board h3{font-weight:700;font-size:17px}
+.btn{font-family:var(--display);font-weight:700;font-size:14px;color:var(--navy);border:0;cursor:pointer;background:linear-gradient(180deg,#ffd75a,var(--sun));padding:12px 18px;border-radius:14px;box-shadow:inset 0 2px 0 rgba(255,255,255,.6),0 5px 0 var(--sun-2),0 14px 24px -12px rgba(11,31,77,.5);transition:transform .1s,box-shadow .1s}
+.btn:active{transform:translateY(4px);box-shadow:inset 0 2px 0 rgba(255,255,255,.6),0 1px 0 var(--sun-2)}
+.ctrs{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:8px 0}
+.ctr{border-radius:18px;padding:10px 14px;background:var(--bg);box-shadow:inset 0 2px 5px rgba(11,31,77,.1)}
+.ctr .l{font-size:14px;color:var(--soft)}
+.ctr .n{display:block;font-family:var(--display);font-weight:900;font-size:clamp(17px,2vw,22px);font-variant-numeric:tabular-nums}
+.ctr.st .n{color:var(--steel)} .ctr.al .n{color:var(--sky)}
+.legend{display:flex;flex-wrap:wrap;gap:18px;font-size:14px;color:var(--soft);margin-top:6px}
+.legend i{display:inline-block;width:18px;height:6px;border-radius:3px;vertical-align:middle;margin-right:8px}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{text-align:right;padding:10px;border-bottom:1px solid var(--line);white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+th{font-weight:400;color:var(--soft);font-size:13px}
+td{font-weight:500;font-variant-numeric:tabular-nums}
+tr.cur td{background:rgba(255,198,41,.18)}
+.pill{display:inline-block;margin-left:8px;padding:1px 10px;border-radius:999px;font-size:12px;font-weight:700;color:#fff}
+.p-good{background:var(--good)} .p-warn{background:var(--warn)} .p-bad{background:var(--bad)}
+
+/* 04 */
+.kz{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media (max-width:800px){.kz{grid-template-columns:minmax(0,1fr)}}
+.col{display:flex;flex-direction:column;gap:4px}
+.col .hd{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.col .hd h3{font-weight:900;font-size:22px}
+.col .badge{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;color:#fff;font-family:var(--display);font-weight:900;font-size:22px;background:var(--c);box-shadow:inset 0 2px 0 rgba(255,255,255,.35),0 4px 0 rgba(0,0,0,.18)}
+.fact{padding-block:14px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:3px}
+.fact b{font-weight:700;font-size:17px}
+.fact span{color:var(--soft);font-size:16px}
+.fact a{font-size:13px;color:var(--sky);font-weight:500}
+
+/* 05 */
+.final{background:radial-gradient(120% 120% at 10% 0%,#1d4fae,var(--navy) 60%);color:#fff;border-radius:34px;padding:clamp(24px,4vw,44px);display:flex;flex-direction:column;gap:24px;box-shadow:0 40px 60px -36px rgba(11,31,77,.8);position:relative;overflow:hidden}
+.final h2{font-weight:900;font-size:clamp(26px,3.6vw,44px);max-width:22ch}
+.final p{max-width:68ch;color:#d6e8ff;font-size:18px}
+.recs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+@media (max-width:860px){.recs{grid-template-columns:minmax(0,1fr)}}
+.rec{border-radius:22px;padding:18px;background:linear-gradient(180deg,rgba(255,255,255,.14),rgba(255,255,255,.05));box-shadow:inset 0 1px 0 rgba(255,255,255,.25)}
+.rec .k{font-family:var(--display);font-weight:900;font-size:30px;color:var(--sun);line-height:1}
+.rec h3{font-weight:700;font-size:17px;margin:10px 0 6px}
+.rec p{font-size:16px}
+.ask{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:700px){.ask{grid-template-columns:minmax(0,1fr)}}
+.ask h3{font-weight:700;font-size:17px;color:var(--sky-2)}
+.ask ul{margin:8px 0 0;padding-left:20px;display:flex;flex-direction:column;gap:4px;color:#d6e8ff}
+footer{padding-block:24px 48px;color:var(--soft);font-size:14px}
+footer .wrap{display:flex;flex-direction:column;gap:8px;max-width:1200px}
+footer a{color:var(--sky)}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}.cta,.btn{transition:none}}
+</style>
+<style>[hidden]{display:none!important}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style>
+</head>
+<body>
+
+
+<!-- общие SVG: градиенты и объёмный орнамент -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="gSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:#a8e4ff"/><stop offset=".45" style="stop-color:#38b6f0"/><stop offset="1" style="stop-color:#163a86"/></linearGradient>
+    <linearGradient id="gSun" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:#fff1a8"/><stop offset=".45" style="stop-color:#ffc629"/><stop offset="1" style="stop-color:#b97400"/></linearGradient>
+    <linearGradient id="gAlu" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:#ffffff"/><stop offset=".35" style="stop-color:#eef4fa"/><stop offset=".7" style="stop-color:#c9d6e4"/><stop offset="1" style="stop-color:#9fb0c4"/></linearGradient>
+    <linearGradient id="gSteel" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:#c4ccd7"/><stop offset=".5" style="stop-color:#8d98a8"/><stop offset="1" style="stop-color:#5d6878"/></linearGradient>
+    <linearGradient id="gGlass" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:#2a5bb8"/><stop offset="1" style="stop-color:#0b1f4d"/></linearGradient>
+    <radialGradient id="gWheel" cx=".35" cy=".35" r=".7"><stop offset="0" style="stop-color:#6b7b95"/><stop offset="1" style="stop-color:#0b1f4d"/></radialGradient>
+  </defs>
+  <symbol id="hornPath" viewBox="0 0 100 64"><path d="M50 60 V36 C50 18 35 7 22 13 C9 19 11 37 24 37 C33 37 35 26 27 24 M50 36 C50 18 65 7 78 13 C91 19 89 37 76 37 C67 37 65 26 73 24"/></symbol>
+  <symbol id="horn" viewBox="0 0 100 64" overflow="visible">
+    <use href="#hornPath" style="fill:none;stroke:rgba(11,31,77,.35);stroke-width:9;stroke-linecap:round;stroke-linejoin:round" transform="translate(1.5 3)"/>
+    <use href="#hornPath" style="fill:none;stroke:url(#gSky);stroke-width:8;stroke-linecap:round;stroke-linejoin:round"/>
+    <use href="#hornPath" style="fill:none;stroke:rgba(255,255,255,.75);stroke-width:2;stroke-linecap:round;stroke-linejoin:round" transform="translate(-1.2 -1.8)"/>
+  </symbol>
+  <symbol id="hornGold" viewBox="0 0 100 64" overflow="visible">
+    <use href="#hornPath" style="fill:none;stroke:rgba(11,31,77,.35);stroke-width:9;stroke-linecap:round;stroke-linejoin:round" transform="translate(1.5 3)"/>
+    <use href="#hornPath" style="fill:none;stroke:url(#gSun);stroke-width:8;stroke-linecap:round;stroke-linejoin:round"/>
+    <use href="#hornPath" style="fill:none;stroke:rgba(255,255,255,.8);stroke-width:2;stroke-linecap:round;stroke-linejoin:round" transform="translate(-1.2 -1.8)"/>
+  </symbol>
+  <symbol id="gem" viewBox="0 0 60 60" overflow="visible">
+    <path d="M30 6 L54 30 L30 54 L6 30 Z" style="fill:rgba(11,31,77,.3)" transform="translate(2 4)"/>
+    <path d="M30 6 L54 30 L30 54 L6 30 Z" style="fill:url(#gSun)"/>
+    <path d="M30 17 C37 17 40 23 35 30 C40 37 37 43 30 43 C23 43 20 37 25 30 C20 23 23 17 30 17 Z" style="fill:url(#gSky);stroke:#fff;stroke-width:1.5;stroke-opacity:.7"/>
+    <path d="M17 26 L30 13 L36 19" style="fill:none;stroke:#fff;stroke-width:3;stroke-linecap:round;stroke-opacity:.8"/>
+  </symbol>
+</svg>
+
+<nav class="nav gut">
+  <div class="wrap">
+    <a class="logo" href="#top"><svg viewBox="0 0 100 64" aria-hidden="true"><use href="#hornGold"/></svg>ESEP</a>
+    <div class="links">
+      <a href="#case" data-i="nav.case"></a><a href="#problem" data-i="nav.problem"></a><a href="#sim" data-i="nav.sim"></a><a href="#kz" data-i="nav.kz"></a><a href="#final" data-i="nav.final"></a>
+    </div>
+    <div class="lang" role="group" aria-label="Language"><button type="button" data-lang="ru">RU</button><button type="button" data-lang="en">EN</button></div>
+  </div>
+</nav>
+
+<header class="hero gut" id="top">
+  <div class="wrap">
+    <div>
+      <div class="kicker" data-i="hero.kicker"></div>
+      <h1 data-i="hero.title"></h1>
+      <p class="sub" data-i="hero.sub"></p>
+      <p class="esep" data-ih="hero.esep"></p>
+      <a class="cta" href="#sim" data-i="hero.cta"></a>
+    </div>
+    <div class="orn3d" id="orn3d" aria-hidden="true"></div>
+    <div class="claims">
+      <div class="claim c1"><span class="n" id="h1n"></span><span class="t" data-i="hero.c1"></span></div>
+      <div class="claim c2"><span class="n" id="h2n"></span><span class="t" data-i="hero.c2"></span></div>
+      <div class="claim c3"><span class="n" id="h3n"></span><span class="t" data-i="hero.c3"></span></div>
+    </div>
+  </div>
+</header>
+
+<main class="gut">
+<section id="case" class="wrap">
+  <div class="sh"><span class="num">01</span><div><div class="lbl" data-i="s1.lbl"></div><h2 data-i="s1.title"></h2><p data-i="s1.sub"></p></div></div>
+  <div class="trains">
+    <div class="card tc al"><h3 data-i="s1.a"></h3><div class="mass">145<span class="unit-t"></span></div>
+      <dl><dt data-i="s1.price"></dt><dd data-i="s1.priceA"></dd><dt data-i="s1.energy"></dt><dd data-i="s1.energyA"></dd></dl>
+      <svg class="coach" viewBox="0 0 560 150" data-coach="al" aria-hidden="true"></svg></div>
+    <div class="card tc st"><h3 data-i="s1.b"></h3><div class="mass">180<span class="unit-t"></span></div>
+      <dl><dt data-i="s1.price"></dt><dd data-i="s1.base"></dd><dt data-i="s1.energy"></dt><dd data-i="s1.base"></dd></dl>
+      <svg class="coach" viewBox="0 0 560 150" data-coach="st" aria-hidden="true"></svg></div>
+  </div>
+  <div class="conds" id="conds"></div>
+  <div class="parts" id="parts"></div>
+  <p class="small note" data-i="s1.note"></p>
+</section>
+
+<svg class="divider" viewBox="0 0 1200 44" preserveAspectRatio="xMidYMid meet" data-band aria-hidden="true"></svg>
+
+<section id="problem" class="wrap">
+  <div class="sh"><span class="num">02</span><div><div class="lbl" data-i="s2.lbl"></div><h2 data-i="s2.title"></h2><p data-i="s2.sub"></p></div></div>
+  <div class="prob">
+    <div class="card"><h3 data-i="s2.chart"></h3><svg class="chart" id="spacing" viewBox="0 0 1000 450" role="img"></svg><p class="small" data-i="s2.note"></p></div>
+    <div class="reasons">
+      <div class="card reason"><svg viewBox="0 0 60 60" aria-hidden="true"><use href="#gem"/></svg><div><h3 data-i="s2.r1t"></h3><p data-i="s2.r1"></p></div></div>
+      <div class="card reason"><svg viewBox="0 0 60 60" aria-hidden="true"><use href="#gem"/></svg><div><h3 data-i="s2.r2t"></h3><p data-i="s2.r2"></p></div></div>
+      <div class="card reason"><svg viewBox="0 0 60 60" aria-hidden="true"><use href="#gem"/></svg><div><h3 data-i="s2.r3t"></h3><p data-i="s2.r3"></p></div></div>
+    </div>
+  </div>
+</section>
+
+<svg class="divider" viewBox="0 0 1200 44" preserveAspectRatio="xMidYMid meet" data-band="gold" aria-hidden="true"></svg>
+
+<section id="sim" class="wrap">
+  <div class="sh"><span class="num">03</span><div><div class="lbl" data-i="s3.lbl"></div><h2 data-i="s3.title"></h2><p data-i="s3.sub"></p></div></div>
+  <div class="sim">
+    <aside class="card pult">
+      <div class="f"><label for="preset" data-i="c.route"></label>
+        <select id="preset"><option value="case" data-i="c.case"></option><option value="mid" data-i="c.mid"></option><option value="long" data-i="c.long" selected></option><option value="custom" data-i="c.custom"></option></select>
+        <span class="small" data-i="c.note"></span></div>
+      <div class="f"><label for="len"><span data-i="c.len"></span><output id="lenO"></output></label><input type="range" id="len" min="20" max="2000" step="10"></div>
+      <div class="f"><label for="stops"><span data-i="c.stops"></span><output id="stopsO"></output></label><input type="range" id="stops" min="0" max="40" step="1"></div>
+      <div class="f"><label for="vmax"><span data-i="c.vmax"></span><output id="vmaxO"></output></label><input type="range" id="vmax" min="60" max="160" step="10"></div>
+      <hr class="sep">
+      <div class="f"><label for="temp"><span data-i="c.temp"></span><output id="tempO"></output></label><input type="range" id="temp" min="-50" max="45" step="5"></div>
+      <div class="f"><label for="regen"><span data-i="c.regen"></span><output id="regenO"></output></label><input type="range" id="regen" min="0" max="80" step="5"></div>
+      <div class="f"><label for="tariff"><span data-i="c.tariff"></span><output id="tariffO"></output></label><input type="range" id="tariff" min="10" max="150" step="1"></div>
+      <div class="f"><label for="akm"><span data-i="c.akm"></span><output id="akmO"></output></label><input type="range" id="akm" min="50000" max="400000" step="5000"></div>
+      <hr class="sep">
+      <div class="two"><div class="f"><label for="prem" data-i="c.prem"></label><input type="number" id="prem" min="0" step="10000"></div><div class="f"><label for="rate" data-i="c.rate"></label><input type="number" id="rate" min="1" step="0.01"></div></div>
+      <div class="f"><label for="years"><span data-i="c.years"></span><output id="yearsO"></output></label><input type="range" id="years" min="10" max="40" step="1"></div>
+      <div class="f"><label for="esc"><span data-i="c.esc"></span><output id="escO"></output></label><input type="range" id="esc" min="0" max="10" step="0.5"></div>
+      <div class="f"><label for="disc"><span data-i="c.disc"></span><output id="discO"></output></label><input type="range" id="disc" min="0" max="15" step="0.5"></div>
+    </aside>
+    <div class="board">
+      <div class="verdict" id="verdict"><div class="ic" id="vIc"></div><div><div class="big" id="vBig"></div><div class="why" id="vWhy"></div></div></div>
+      <div class="kpis">
+        <div class="card kpi"><span class="k" data-i="k.mwh"></span><span class="v" id="kMwh"></span><span class="s" id="kMwhS"></span></div>
+        <div class="card kpi"><span class="k" data-i="k.money"></span><span class="v" id="kMoney"></span><span class="s" id="kMoneyS"></span></div>
+        <div class="card kpi"><span class="k" data-i="k.pay"></span><span class="v" id="kPay"></span><span class="s" id="kPayS"></span></div>
+        <div class="card kpi"><span class="k" data-i="k.npv"></span><span class="v" id="kNpv"></span><span class="s" id="kNpvS"></span></div>
+      </div>
+      <div class="card">
+        <div class="runhead"><h3 data-i="r.title"></h3><button class="btn" id="play" type="button" data-i="r.play"></button></div>
+        <svg class="chart" id="route" viewBox="0 0 1000 130" role="img"></svg>
+        <div class="ctrs"><div class="ctr st"><span class="l" data-i="r.steel"></span><span class="n" id="cS"></span></div><div class="ctr al"><span class="l" data-i="r.alu"></span><span class="n" id="cA"></span></div></div>
+        <svg class="chart" id="prof" viewBox="0 0 1000 220" role="img"></svg>
+        <p class="small" data-i="r.note"></p>
+      </div>
+      <div class="card"><h3 data-i="cum.title"></h3><svg class="chart" id="cum" viewBox="0 0 1000 380" role="img"></svg>
+        <div class="legend"><span><i style="background:var(--sky)"></i><span data-i="cum.und"></span></span><span><i style="background:var(--sun)"></i><span data-i="cum.dis"></span></span></div></div>
+      <div class="card"><h3 data-i="sens.title"></h3><div class="tw"><table id="sens"></table></div><p class="small" data-i="sens.note"></p></div>
+    </div>
+  </div>
+</section>
+
+<svg class="divider" viewBox="0 0 1200 44" preserveAspectRatio="xMidYMid meet" data-band aria-hidden="true"></svg>
+
+<section id="kz" class="wrap">
+  <div class="sh"><span class="num">04</span><div><div class="lbl" data-i="s4.lbl"></div><h2 data-i="s4.title"></h2><p data-i="s4.sub"></p></div></div>
+  <div class="kz">
+    <div class="card col" style="--c:var(--good)"><div class="hd"><span class="badge">+</span><h3 data-i="s4.pro"></h3></div>
+      <div class="fact"><b data-i="f.1t"></b><span data-i="f.1"></span><a href="https://www.shapesbyhydro.com/en/knowledge/in-the-cold-aluminium-gets-stronger/" target="_blank" rel="noopener">Hydro, 2020</a></div>
+      <div class="fact"><b data-i="f.2t"></b><span data-i="f.2"></span><a href="https://nottingham-repository.worktribe.com/output/2607607" target="_blank" rel="noopener">Mistry, Johnson, 2020</a></div>
+      <div class="fact"><b data-i="f.3t"></b><span data-i="f.3"></span><a href="https://railway-news.com/stadler-to-open-central-asias-first-aluminium-railcar-body-production-site/" target="_blank" rel="noopener">Railway-News, 2026</a></div>
+    </div>
+    <div class="card col" style="--c:var(--bad)"><div class="hd"><span class="badge">−</span><h3 data-i="s4.con"></h3></div>
+      <div class="fact"><b data-i="f.4t"></b><span data-i="f.4"></span><a href="https://www.makeitfrom.com/compare/6005-AlSiMg-A96005-Aluminum/ASTM-A572-HSLA-Steel" target="_blank" rel="noopener">MakeItFrom</a></div>
+      <div class="fact"><b data-i="f.5t"></b><span data-i="f.5"></span><span class="small">ρ = p ÷ (R·T)</span></div>
+      <div class="fact"><b data-i="f.6t"></b><span data-i="f.6"></span><a href="https://zakon.kz/pravo/6531072-v-kazakhstane-vyrosli-predelnye-tarify-energokompaniy-na-elektroenergiyu.html" target="_blank" rel="noopener">Zakon.kz, 2026</a></div>
+    </div>
+  </div>
+</section>
+
+<section id="final" class="wrap">
+  <div class="sh"><span class="num">05</span><div><div class="lbl" data-i="s5.lbl"></div><h2 data-i="s5.title"></h2></div></div>
+  <div class="final">
+    <svg class="divider" viewBox="0 0 1200 44" preserveAspectRatio="xMidYMid meet" data-band="gold" aria-hidden="true"></svg>
+    <h2 data-i="s5.big"></h2>
+    <p data-i="s5.p"></p>
+    <div class="recs">
+      <div class="rec"><div class="k">1</div><h3 data-i="s5.r1t"></h3><p data-i="s5.r1"></p></div>
+      <div class="rec"><div class="k">2</div><h3 data-i="s5.r2t"></h3><p data-i="s5.r2"></p></div>
+      <div class="rec"><div class="k">3</div><h3 data-i="s5.r3t"></h3><p data-i="s5.r3"></p></div>
+    </div>
+    <div class="ask">
+      <div><h3 data-i="s5.st"></h3><ul><li data-i="s5.st1"></li><li data-i="s5.st2"></li><li data-i="s5.st3"></li></ul></div>
+      <div><h3 data-i="s5.kt"></h3><ul><li data-i="s5.kt1"></li><li data-i="s5.kt2"></li><li data-i="s5.kt3"></li></ul></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="gut"><div class="wrap">
+  <span data-i="ft.model"></span>
+  <span><span data-i="ft.src"></span> <a href="https://railways.kz/en/news2025/stadler-kazakhstan-cars-confirm-their-readiness-operation-kazakh/" target="_blank" rel="noopener">KTZ 2025</a>, <a href="https://en.wikipedia.org/wiki/Transport_in_Kazakhstan" target="_blank" rel="noopener">Wikipedia</a>, <a href="https://zakon.kz/pravo/6531072-v-kazakhstane-vyrosli-predelnye-tarify-energokompaniy-na-elektroenergiyu.html" target="_blank" rel="noopener">Zakon.kz</a>.</span>
+</div></footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+/* ---------- тексты RU / EN ---------- */
+const T={
+ru:{
+'nav.case':'Кейс','nav.problem':'Проблема','nav.sim':'Симулятор','nav.kz':'Казахстан','nav.final':'Вывод',
+'hero.kicker':'Кейс Stadler Kazakhstan, хакатон, октябрь 2026',
+'hero.title':'Сталь или алюминий для казахстанской степи',
+'hero.sub':'Обещанная экономия лёгкого кузова рассчитана для пригородной электрички. Мы пересчитали её для дальних маршрутов КТЖ, казахстанских тарифов и климата.',
+'hero.esep':'<b>ESEP</b> от казахского «есеп», расчёт',
+'hero.cta':'Открыть симулятор',
+'hero.c1':'экономия в год по данным кейса, Польша',
+'hero.c2':'по нашей модели на дальнем маршруте КТЖ',
+'hero.c3':'окупаемость вместо 11 месяцев при 35 ₸ за кВт·ч',
+'s1.lbl':'Кейс','s1.title':'Условия и решение заданий 1–4','s1.sub':'Два пятивагонных электропоезда FLIRT. Разница только в материале кузова.',
+'s1.a':'Поезд A, алюминий','s1.b':'Поезд B, сталь','s1.price':'Цена','s1.energy':'Расход','s1.priceA':'на 400 000 PLN дороже','s1.energyA':'на 357 МВт·ч в год меньше','s1.base':'базовый',
+'s1.note':'Рост тарифа в части 4 считаем со второго года: 428 400 × ((1,02³⁰ − 1) ÷ 0,02).',
+'cond':['15 остановок','до <b>140</b> км/ч','<b>245 000</b> км в год','<b>1,2</b> PLN за кВт·ч','срок <b>30</b> лет'],
+'p1':'Часть 1. Один поезд','p2':'Часть 2. Парк из 20','p3':'Часть 3. Окупаемость','p4':'Часть 4. Тариф +2 % в год',
+'p.e1':'экономия энергии в год','p.m1':'экономия денег в год','p.m30':'за 30 лет','p.e30':'энергии за 30 лет','p.avg':'в среднем в год','p.acc':'накоплено за 30 лет',
+'p.pay':'400 000 ÷ 428 400 = 0,93 года','p.n1':'чистая выгода одного поезда','p.nf':'чистая выгода парка','p.esc1':'один поезд за 30 лет','p.escf':'парк за 30 лет','p.escp':'окупаемость почти не меняется, итог растёт на 35 %',
+'s2.lbl':'Проблема','s2.title':'Цифра 357 верна для электрички, но не для степи','s2.sub':'Лёгкий кузов экономит энергию на разгонах. Чем реже остановки, тем меньше разгонов и тем меньше выгода.',
+'s2.chart':'Экономия алюминия и расстояние между остановками','s2.note':'Наша модель: ровный путь, 140 км/ч, рекуперация 60 %, +20 °C. Это расчёт, а не замер.',
+'s2.r1t':'Редкие остановки','s2.r1':'В кейсе остановка примерно каждые 6 км. На дальних маршрутах КТЖ между станциями десятки и сотни километров.',
+'s2.r2t':'Дешёвое электричество','s2.r2':'1,2 PLN это около 140 ₸ за кВт·ч. Тарифы производителей в Казахстане в 2026 году от 11 до 48 ₸.',
+'s2.r3t':'Три четверти сети без проводов','s2.r3':'Электрифицировано около 4 237 из 16 636 км. На остальных участках экономия будет в дизельном топливе.',
+'ch.x':'км между остановками','ch.y':'МВт·ч в год','ch.claim':'обещано в кейсе: 357','ch.case':'кейс','ch.ktz':'дальний КТЖ',
+'s3.lbl':'Симулятор','s3.title':'Задайте маршрут и посмотрите, окупится ли алюминий','s3.sub':'Два поезда, 180 и 145 т, едут по одному графику. Всё пересчитывается сразу.',
+'c.route':'Маршрут','c.case':'Кейс: пригородный, Польша','c.mid':'Казахстан: межобластной (пример)','c.long':'Казахстан: дальний (пример)','c.custom':'Свой маршрут',
+'c.note':'Казахстанские маршруты условные. Подставьте реальную длину и число остановок.',
+'c.len':'Длина маршрута','c.stops':'Остановок в пути','c.vmax':'Максимальная скорость','c.temp':'Температура воздуха','c.regen':'Рекуперация','c.tariff':'Тариф','c.akm':'Пробег в год','c.prem':'Переплата, PLN','c.rate':'₸ за 1 PLN','c.years':'Срок службы','c.esc':'Рост тарифа в год','c.disc':'Ставка дисконтирования',
+'k.mwh':'Экономия энергии','k.money':'Экономия в год','k.pay':'Окупаемость','k.npv':'Итог за срок',
+'r.title':'Рейс','r.play':'Запустить рейс','r.steel':'Сталь, 180 т','r.alu':'Алюминий, 145 т','r.note':'Скорость на одном перегоне. Лишние 35 т стоят энергии на разгоне. На ровном ходу масса почти не важна.',
+'cum.title':'Накопленная выгода алюминия, млн ₸','cum.und':'без учёта стоимости денег','cum.dis':'с дисконтированием',
+'sens.title':'Тот же маршрут при разных тарифах','sens.note':'Окупаемость здесь простая: переплата, делённая на экономию за год.',
+'s4.lbl':'Казахстан','s4.title':'Что меняется в наших условиях','s4.sub':'Ответ на вопросы 3 и 4 кейса: что работает за алюминий, а что против.','s4.pro':'За алюминий','s4.con':'Против алюминия',
+'f.1t':'Не становится хрупким при −50 °C','f.1':'У алюминия нет перехода в хрупкое состояние, на морозе он сохраняет прочность. Стали для таких температур нужны хладостойкие марки.',
+'f.2t':'Лёгкий поезд меньше разрушает путь','f.2':'КТЖ владеет и вагонами, и путями, поэтому выигрывает дважды. Цифру для КТЖ нужно оценить отдельно.',
+'f.3t':'Кузова делают в Астане','f.3':'Stadler строит цех алюминиевых кузовов на 14 млрд ₸: локализация и рабочие места.',
+'f.4t':'Проводит тепло в 3,5–4 раза лучше стали','f.4':'180–200 против 51 Вт/(м·К). При −50 °C через каркас может уходить больше тепла, если не усилить изоляцию.',
+'f.5t':'Холодный воздух плотнее','f.5':'При −30 °C плотность воздуха около 1,45 кг/м³ против 1,20 при +20 °C. Сопротивление выше примерно на 20 %, и от массы оно не зависит.',
+'f.6t':'Редкие остановки и дешёвый тариф','f.6':'Главная причина, почему выгода в разы меньше, чем в кейсе.',
+'s5.lbl':'Вывод','s5.title':'Решение должно опираться на казахстанский маршрут',
+'s5.big':'Алюминий выгоден, но в Казахстане окупается за годы, а не за месяцы',
+'s5.p':'По условиям кейса переплата окупается меньше чем за год. На дальних маршрутах КТЖ с редкими остановками и тарифом 25–45 ₸ окупаемость растягивается до 3–17 лет, а в худших сценариях с учётом стоимости денег вложение не возвращается.',
+'s5.r1t':'Считать полную стоимость','s5.r1':'Включить в тендеры КТЖ стоимость жизненного цикла с казахстанскими тарифами и маршрутами, а не только цену закупки.',
+'s5.r2t':'Алюминий там, где окупается','s5.r2':'Наибольшую выгоду дают электрифицированные направления с частыми остановками и интенсивной эксплуатацией.',
+'s5.r3t':'Проверить цифры замером','s5.r3':'Поставить регистраторы энергии на несколько вагонов и за сезон получить реальную экономию вместо расчётной.',
+'s5.st':'Запросить у Stadler','s5.st1':'как получены 357 МВт·ч: замер или расчёт, с какой рекуперацией','s5.st2':'теплопотери стального и алюминиевого кузова','s5.st3':'стоимость ремонта алюминиевого кузова',
+'s5.kt':'Запросить у КТЖ','s5.kt1':'реальный тариф на тягу','s5.kt2':'длины маршрутов и число остановок','s5.kt3':'доли электрической и дизельной тяги, срок службы 30 или 40 лет',
+'ft.model':'Модель упрощённая: ровный путь, сопротивление качению и воздуха, разгон 0,8 м/с², мощность до 2,6 МВт, КПД тяги 85 %. Отопление и дизельная тяга не учтены. Курс 116,66 ₸ за 1 PLN на 17.10.2026.',
+'ft.src':'Источники: презентация кейса Stadler Kazakhstan,',
+u:{kwh:'кВт·ч',mwh:'МВт·ч',km:'км',kmh:'км/ч',t:'т',yr:'лет',mo:'мес',mln:'млн ₸',tkwh:'₸/кВт·ч',pln:'PLN'},
+d:{every:'через',stops:'остановок',speed:'скорость, км/ч',pctSteel:'% от расхода стали',prem:'переплата',disc:'с дисконтированием',nodisc:'не окупается',und:'без дисконтирования',no:'нет',
+ good:'Алюминий окупается за ',goodW:'Даже с учётом стоимости денег переплата возвращается до конца срока службы.',
+ warn:'Окупается только без учёта стоимости денег',warnW:(p,y)=>'Простая окупаемость '+p+', но с дисконтированием вложение не возвращается за '+y+' лет.',
+ bad:'Алюминий не окупается',badW:y=>'Экономия энергии не покрывает переплату за '+y+' лет. Выгоду нужно искать в износе пути и обслуживании.',
+ thT:'Тариф, ₸ за кВт·ч',thS:'Экономия в год',thP:'Окупаемость',thR:y=>'Итог за '+y+' лет',pl:'как в Польше',ok:'окупается',mid:'на грани',nok:'нет',dash:'—',km0:'0 км'}
+},
+en:{
+'nav.case':'Case','nav.problem':'Problem','nav.sim':'Simulator','nav.kz':'Kazakhstan','nav.final':'Conclusion',
+'hero.kicker':'Stadler Kazakhstan case, hackathon, October 2026',
+'hero.title':'Steel or aluminium for the Kazakh steppe',
+'hero.sub':'The promised savings of a lighter car body were calculated for a commuter train. We recalculated them for KTZ long-distance routes, Kazakh tariffs and climate.',
+'hero.esep':'<b>ESEP</b> comes from the Kazakh word “esep”, calculation',
+'hero.cta':'Open the simulator',
+'hero.c1':'annual savings in the case, Poland',
+'hero.c2':'our model, KTZ long-distance route',
+'hero.c3':'payback instead of 11 months at 35 ₸ per kWh',
+'s1.lbl':'Case','s1.title':'Inputs and solution to tasks 1–4','s1.sub':'Two five-car FLIRT electric trains. The only difference is the car body material.',
+'s1.a':'Train A, aluminium','s1.b':'Train B, steel','s1.price':'Price','s1.energy':'Energy','s1.priceA':'400,000 PLN more','s1.energyA':'357 MWh less per year','s1.base':'baseline',
+'s1.note':'Tariff growth in part 4 starts in year 2: 428,400 × ((1.02³⁰ − 1) ÷ 0.02).',
+'cond':['15 stops','up to <b>140</b> km/h','<b>245,000</b> km per year','<b>1.2</b> PLN per kWh','<b>30</b>-year life'],
+'p1':'Part 1. One train','p2':'Part 2. Fleet of 20','p3':'Part 3. Payback','p4':'Part 4. Tariff +2% a year',
+'p.e1':'energy saved per year','p.m1':'money saved per year','p.m30':'over 30 years','p.e30':'energy over 30 years','p.avg':'average per year','p.acc':'cumulative over 30 years',
+'p.pay':'400,000 ÷ 428,400 = 0.93 years','p.n1':'net benefit, one train','p.nf':'net benefit, fleet','p.esc1':'one train over 30 years','p.escf':'fleet over 30 years','p.escp':'payback barely changes, the total grows by 35%',
+'s2.lbl':'Problem','s2.title':'357 is right for a commuter train, not for the steppe','s2.sub':'A lighter body saves energy when the train accelerates. Fewer stops mean fewer accelerations and smaller savings.',
+'s2.chart':'Aluminium savings vs distance between stops','s2.note':'Our model: flat track, 140 km/h, 60% regenerative braking, +20 °C. A calculation, not a measurement.',
+'s2.r1t':'Few stops','s2.r1':'In the case a stop comes roughly every 6 km. On KTZ long-distance routes stations are tens or hundreds of kilometres apart.',
+'s2.r2t':'Cheaper electricity','s2.r2':'1.2 PLN is about 140 ₸ per kWh. Kazakh generator tariffs in 2026 range from 11 to 48 ₸.',
+'s2.r3t':'Three quarters of the network has no wires','s2.r3':'About 4,237 of 16,636 km are electrified. Elsewhere the savings would be in diesel fuel.',
+'ch.x':'km between stops','ch.y':'MWh per year','ch.claim':'case claim: 357','ch.case':'case','ch.ktz':'KTZ long-distance',
+'s3.lbl':'Simulator','s3.title':'Set a route and see if aluminium pays off','s3.sub':'Two trains, 180 t and 145 t, run on the same timetable. Everything updates instantly.',
+'c.route':'Route','c.case':'Case: commuter, Poland','c.mid':'Kazakhstan: inter-regional (example)','c.long':'Kazakhstan: long-distance (example)','c.custom':'Custom route',
+'c.note':'Kazakh routes are illustrative. Enter the real length and number of stops.',
+'c.len':'Route length','c.stops':'Intermediate stops','c.vmax':'Top speed','c.temp':'Air temperature','c.regen':'Regenerative braking','c.tariff':'Tariff','c.akm':'Annual mileage','c.prem':'Premium, PLN','c.rate':'₸ per 1 PLN','c.years':'Service life','c.esc':'Tariff growth per year','c.disc':'Discount rate',
+'k.mwh':'Energy saved','k.money':'Savings per year','k.pay':'Payback','k.npv':'Lifetime result',
+'r.title':'Trip','r.play':'Run the trip','r.steel':'Steel, 180 t','r.alu':'Aluminium, 145 t','r.note':'Speed over one section. The extra 35 t costs energy while accelerating. At steady speed mass barely matters.',
+'cum.title':'Cumulative aluminium benefit, M ₸','cum.und':'undiscounted','cum.dis':'discounted',
+'sens.title':'Same route at different tariffs','sens.note':'Simple payback: the premium divided by annual savings.',
+'s4.lbl':'Kazakhstan','s4.title':'What changes in Kazakh conditions','s4.sub':'Answer to case questions 3 and 4: what works for aluminium and what against.','s4.pro':'For aluminium','s4.con':'Against aluminium',
+'f.1t':'Does not turn brittle at −50 °C','f.1':'Aluminium has no ductile-to-brittle transition and keeps its strength in the cold. Steel needs special cold-resistant grades.',
+'f.2t':'A lighter train wears the track less','f.2':'KTZ owns both the cars and the track, so it gains twice. The figure for KTZ still needs to be estimated.',
+'f.3t':'Car bodies are made in Astana','f.3':'Stadler is building a 14 bn ₸ aluminium body workshop: localisation and jobs.',
+'f.4t':'Conducts heat 3.5–4 times better than steel','f.4':'180–200 vs 51 W/(m·K). At −50 °C more heat may escape through the frame unless insulation is improved.',
+'f.5t':'Cold air is denser','f.5':'At −30 °C air density is about 1.45 kg/m³ vs 1.20 at +20 °C. Drag is about 20% higher, and it does not depend on mass.',
+'f.6t':'Few stops and a low tariff','f.6':'The main reason the benefit is several times smaller than in the case.',
+'s5.lbl':'Conclusion','s5.title':'The decision must rest on the Kazakh route',
+'s5.big':'Aluminium pays off, but in Kazakhstan it takes years, not months',
+'s5.p':'Under the case inputs the premium is recovered in under a year. On KTZ long-distance routes with few stops and a 25–45 ₸ tariff, payback stretches to 3–17 years, and in the worst scenarios the discounted investment is never recovered.',
+'s5.r1t':'Count the full cost','s5.r1':'Include life-cycle cost with Kazakh tariffs and routes in KTZ tenders, not just the purchase price.',
+'s5.r2t':'Aluminium where it pays off','s5.r2':'Electrified lines with frequent stops and intensive use give the biggest benefit.',
+'s5.r3t':'Verify by measurement','s5.r3':'Fit energy recorders to a few cars and get real savings over one season instead of calculated ones.',
+'s5.st':'Ask Stadler','s5.st1':'how the 357 MWh was obtained: measured or modelled, with what regenerative braking','s5.st2':'heat loss of the steel and aluminium bodies','s5.st3':'repair cost of an aluminium body',
+'s5.kt':'Ask KTZ','s5.kt1':'the actual traction tariff','s5.kt2':'route lengths and number of stops','s5.kt3':'electric vs diesel share, 30 or 40-year service life',
+'ft.model':'Simplified model: flat track, rolling and air resistance, 0.8 m/s² acceleration, up to 2.6 MW, 85% traction efficiency. Heating and diesel traction are not included. Rate 116.66 ₸ per 1 PLN on 17.10.2026.',
+'ft.src':'Sources: Stadler Kazakhstan case presentation,',
+u:{kwh:'kWh',mwh:'MWh',km:'km',kmh:'km/h',t:'t',yr:'yrs',mo:'mo',mln:'M ₸',tkwh:'₸/kWh',pln:'PLN'},
+d:{every:'every',stops:'stops',speed:'speed, km/h',pctSteel:'% of steel train energy',prem:'premium',disc:'discounted',nodisc:'not recovered',und:'undiscounted',no:'none',
+ good:'Aluminium pays off in ',goodW:'Even with discounting, the premium is recovered within the service life.',
+ warn:'Pays off only without discounting',warnW:(p,y)=>'Simple payback is '+p+', but with discounting the investment is not recovered in '+y+' years.',
+ bad:'Aluminium does not pay off',badW:y=>'Energy savings do not cover the premium in '+y+' years. Look for value in track wear and maintenance.',
+ thT:'Tariff, ₸ per kWh',thS:'Savings per year',thP:'Payback',thR:y=>'Result over '+y+' years',pl:'as in Poland',ok:'pays off',mid:'borderline',nok:'no',dash:'—',km0:'0 km'}
+}};
+let L='ru';
+try{const s=localStorage.getItem('esep-lang');if(s==='en'||s==='ru')L=s;}catch(e){}
+const tr=k=>T[L][k];
+const U=()=>T[L].u, D=()=>T[L].d;
+const nf=(x,d=0)=>x.toLocaleString(L==='ru'?'ru-RU':'en-US',{maximumFractionDigits:d,minimumFractionDigits:d});
+const $=id=>document.getElementById(id);
+const tok=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const NS='http://www.w3.org/2000/svg';
+function el(tag,a,p,t){const e=document.createElementNS(NS,tag);for(const k in a)e.setAttribute(k,a[k]);if(t!==undefined)e.textContent=t;if(p)p.appendChild(e);return e;}
+
+/* ---------- физика ---------- */
+const C={ROT:1.08,A:0.8,B:0.8,P:2.6e6,CDA:10,ROLL:12,ROLLV:0.1,ETA:0.85,DT:0.5},M_AL=145,M_ST=180;
+const PRESETS={case:{len:90,stops:15,vmax:140,temp:20,regen:60,tariff:140,akm:245000},mid:{len:350,stops:5,vmax:120,temp:-10,regen:30,tariff:35,akm:245000},long:{len:1000,stops:8,vmax:120,temp:-20,regen:30,tariff:35,akm:245000}};
+const rhoAt=T=>101325/(287.05*(T+273.15));
+const resist=(mt,v,rho)=>mt*(C.ROLL+C.ROLLV*v*3.6)+0.5*rho*C.CDA*v*v;
+function segment(mt,dist,vmax,regen,rho){
+  const m=mt*1000*C.ROT;let v=0,x=0,eIn=0,eBack=0,br=false,k=0,g=0;const cum=[[0,0]],prof=[[0,0]];
+  while(x<dist&&g++<2e6){
+    if(!br&&dist-x<=v*v/(2*C.B))br=true;
+    const r=resist(mt,v,rho);
+    if(br){const fb=m*C.B-r;if(fb>0)eBack+=fb*v*C.DT*regen;v=Math.max(v-C.B*C.DT,0);if(v===0)break;}
+    else{const f=v<vmax?Math.min(m*C.A+r,C.P/Math.max(v,0.1)):r;const a=(f-r)/m;eIn+=f*v*C.DT/C.ETA;v=Math.min(v+a*C.DT,vmax);}
+    x+=v*C.DT;if(++k%4===0){cum.push([x,eIn-eBack]);prof.push([x,v]);}
+  }
+  cum.push([dist,eIn-eBack]);prof.push([dist,0]);return{e:eIn-eBack,cum,prof};
+}
+function interp(a,x){if(x<=a[0][0])return a[0][1];let lo=0,hi=a.length-1;while(hi-lo>1){const m=(lo+hi)>>1;if(a[m][0]<=x)lo=m;else hi=m;}const[x0,y0]=a[lo],[x1,y1]=a[hi];return x1===x0?y1:y0+(y1-y0)*(x-x0)/(x1-x0);}
+function perKm(mt,p){const n=Math.round(p.stops),seg=p.len*1000/(n+1);return segment(mt,seg,p.vmax/3.6,p.regen/100,rhoAt(p.temp)).e*(n+1)/3.6e6/p.len;}
+const annualSave=p=>(perKm(M_ST,p)-perKm(M_AL,p))*p.akm/1000;
+
+/* ---------- статичные тексты ---------- */
+function applyText(){
+  document.documentElement.lang=L;
+  document.querySelectorAll('[data-i]').forEach(e=>{const v=tr(e.dataset.i);if(typeof v==='string')e.textContent=v;});
+  document.querySelectorAll('[data-ih]').forEach(e=>{e.innerHTML=tr(e.dataset.ih);});
+  document.querySelectorAll('.lang button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.lang===L?'true':'false'));
+  document.querySelectorAll('.unit-t').forEach(e=>e.textContent=' '+U().t);
+  $('conds').innerHTML=tr('cond').map(c=>'<span class="chip">'+c+'</span>').join('');
+  const u=U();
+  const parts=[
+    ['p1',[[nf(357000)+' '+u.kwh,'p.e1'],[nf(428400)+' PLN','p.m1'],[nf(12852000)+' PLN','p.m30']]],
+    ['p2',[[nf(214200)+' '+u.mwh,'p.e30'],[nf(8568000)+' PLN','p.avg'],[nf(257040000)+' PLN','p.acc']]],
+    ['p3',[[nf(11.2,1)+' '+u.mo,'p.pay'],[nf(12452000)+' PLN','p.n1'],[nf(249040000)+' PLN','p.nf']]],
+    ['p4',[['≈ '+nf(17379365)+' PLN','p.esc1'],['≈ '+nf(347587303)+' PLN','p.escf'],['≈ 11 '+u.mo,'p.escp']]]];
+  $('parts').innerHTML=parts.map(([h,rows])=>'<div class="card part"><h3>'+tr(h)+'</h3>'+rows.map(([v,l])=>'<div class="r"><div class="v">'+v+'</div><div class="l">'+tr(l)+'</div></div>').join('')+'</div>').join('');
+  const p={...PRESETS.long},mwh=annualSave(p),pay=400000*116.66/(mwh*1000*35);
+  $('h1n').textContent='357 '+u.mwh;$('h2n').textContent='≈ '+nf(mwh)+' '+u.mwh;$('h3n').textContent='≈ '+nf(pay)+' '+u.yr;
+  $('spacing').setAttribute('aria-label',tr('s2.chart'));
+}
+
+/* ---------- объёмные SVG: ленты, вагоны ---------- */
+function bands(){document.querySelectorAll('svg[data-band]').forEach(s=>{s.innerHTML='';const gold=s.dataset.band==='gold';const n=20;for(let i=0;i<n;i++){const x=10+i*59;el('use',{href:gold?'#hornGold':'#horn',x:x,y:i%2?4:2,width:52,height:34,transform:i%2?`rotate(180 ${x+26} 21)`:''},s);}});}
+function coaches(){
+  document.querySelectorAll('svg[data-coach]').forEach(s=>{
+    s.innerHTML='';const al=s.dataset.coach==='al';
+    el('ellipse',{cx:280,cy:140,rx:260,ry:8,style:'fill:rgba(11,31,77,.18)'},s);
+    el('rect',{x:10,y:10,width:540,height:110,rx:24,style:`fill:url(#${al?'gAlu':'gSteel'});stroke:${al?'#9fb0c4':'#5d6878'};stroke-width:1.5`},s);
+    el('rect',{x:24,y:16,width:512,height:8,rx:4,style:'fill:#fff;opacity:.55'},s);
+    el('rect',{x:10,y:84,width:540,height:12,style:`fill:${al?'url(#gSky)':'#5d6878'}`},s);
+    el('rect',{x:10,y:96,width:540,height:5,style:'fill:url(#gSun)'},s);
+    for(let i=1;i<8;i++)el('rect',{x:30+i*60,y:34,width:42,height:38,rx:8,style:'fill:url(#gGlass)'},s);
+    for(let i=1;i<8;i++)el('rect',{x:34+i*60,y:37,width:14,height:4,rx:2,style:'fill:#fff;opacity:.5'},s);
+    [24,500].forEach(x=>{el('rect',{x:x,y:30,width:36,height:66,rx:7,style:'fill:url(#gSun);stroke:#b97400;stroke-width:1'},s);el('rect',{x:x+8,y:38,width:20,height:24,rx:4,style:'fill:url(#gGlass)'},s);});
+    [80,140,420,480].forEach(cx=>{el('circle',{cx:cx,cy:124,r:15,style:'fill:url(#gWheel)'},s);el('circle',{cx:cx-4,cy:120,r:4,style:'fill:#fff;opacity:.6'},s);});
+    for(let i=0;i<6;i++)el('use',{href:al?'#horn':'#hornGold',x:175+i*36,y:100,width:30,height:19},s);
+  });
+}
+
+/* ---------- 3D орнамент ---------- */
+function ornament(){
+  const box=$('orn3d');
+  const fallback=()=>{box.innerHTML='<svg viewBox="-10 -10 120 84"><use href="#horn" width="100" height="64"/></svg>';};
+  if(typeof THREE==='undefined'){fallback();return;}
+  let renderer;
+  try{renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});}catch(e){fallback();return;}
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+  renderer.outputEncoding=THREE.sRGBEncoding;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.0;
+  box.appendChild(renderer.domElement);
+  const scene=new THREE.Scene(),cam=new THREE.PerspectiveCamera(32,1,0.1,100);cam.position.set(0,0,13);
+  scene.add(new THREE.HemisphereLight(0x9fdcff,0x0b1f4d,0.45));
+  const key=new THREE.DirectionalLight(0xffffff,1.3);key.position.set(-4,6,8);scene.add(key);
+  const warm=new THREE.PointLight(0xffc629,2.2,30);warm.position.set(5,-3,5);scene.add(warm);
+  const rim=new THREE.PointLight(0x38b6f0,2.5,30);rim.position.set(-3,2,-6);scene.add(rim);
+  const blue=new THREE.MeshPhysicalMaterial({color:0x0f7fe0,metalness:0.3,roughness:0.16,clearcoat:1,clearcoatRoughness:0.08});
+  const gold=new THREE.MeshPhysicalMaterial({color:0xffbf1f,metalness:0.85,roughness:0.25,clearcoat:0.6});
+  const g=new THREE.Group();scene.add(g);
+  const R=[[0,-1.9],[0,-1.0],[0.06,-0.15],[0.32,0.6],[0.82,1.06],[1.38,1.0],[1.7,0.55],[1.66,-0.02],[1.34,-0.32],[0.97,-0.22],[0.86,0.14],[1.07,0.38],[1.3,0.26]];
+  const tube=(pts,sx,sy,oy,rad,mat)=>{
+    const v=pts.map((p,i)=>new THREE.Vector3(p[0]*sx,p[1]*sy+oy,0.18*Math.sin(i*0.7)));
+    const curve=new THREE.CatmullRomCurve3(v,false,'centripetal');
+    g.add(new THREE.Mesh(new THREE.TubeGeometry(curve,220,rad,28,false),mat));
+    [v[0],v[v.length-1]].forEach(p=>{const s=new THREE.Mesh(new THREE.SphereGeometry(rad,28,20),mat);s.position.copy(p);g.add(s);});
+  };
+  tube(R,1,1,0.35,0.2,blue);tube(R,-1,1,0.35,0.2,blue);
+  const r2=R.slice(2);tube(r2,0.55,-0.55,-1.45,0.13,blue);tube(r2,-0.55,-0.55,-1.45,0.13,blue);
+  const ring=new THREE.Mesh(new THREE.TorusGeometry(3.15,0.07,24,160),gold);ring.position.z=-0.6;g.add(ring);
+  for(let i=0;i<8;i++){const a=i/8*Math.PI*2,d=new THREE.Mesh(new THREE.OctahedronGeometry(0.16,0),gold);d.position.set(Math.cos(a)*3.15,Math.sin(a)*3.15,-0.6);g.add(d);}
+  const resize=()=>{const w=box.clientWidth,h=box.clientHeight;if(!w||!h)return;renderer.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix();};
+  resize();window.addEventListener('resize',resize);
+  let mx=0,my=0;box.parentElement.addEventListener('pointermove',e=>{const r=box.getBoundingClientRect();mx=((e.clientX-r.left)/r.width-.5);my=((e.clientY-r.top)/r.height-.5);});
+  const still=matchMedia('(prefers-reduced-motion: reduce)').matches;let vis=true;
+  if('IntersectionObserver' in window)new IntersectionObserver(es=>{vis=es[0].isIntersecting;}).observe(box);
+  const t0=performance.now();
+  const loop=now=>{const t=(now-t0)/1000;
+    g.rotation.y=Math.sin(t*0.45)*0.55+mx*0.6;g.rotation.x=-0.08+my*0.35;g.position.y=Math.sin(t*0.9)*0.08;
+    ring.rotation.z=t*0.15;renderer.render(scene,cam);if(!still)requestAnimationFrame(f);};
+  const f=now=>{if(vis)loop(now);else requestAnimationFrame(f);};
+  if(still){g.rotation.y=0.35;renderer.render(scene,cam);}else requestAnimationFrame(f);
+}
+
+/* ---------- 02: график ---------- */
+function interpLog(xs,ys,xv){for(let i=1;i<xs.length;i++)if(xv<=xs[i]){const t=(Math.log(xv)-Math.log(xs[i-1]))/(Math.log(xs[i])-Math.log(xs[i-1]));return ys[i-1]+(ys[i]-ys[i-1])*t;}return ys[ys.length-1];}
+let SP=null;
+function drawSpacing(){
+  const s=$('spacing');s.innerHTML='';
+  const sp=[2,3,5,8,12,20,35,60,100,150];
+  if(!SP)SP=sp.map(k=>annualSave({len:k*20,stops:19,vmax:140,temp:20,regen:60,akm:245000}));
+  const vals=SP,Lx=80,Rx=970,Ty=24,By=360,lg=Math.log10,x=v=>Lx+(Rx-Lx)*(lg(v)-lg(2))/(lg(150)-lg(2));
+  const ymax=Math.ceil(Math.max(400,...vals)/100)*100,y=v=>By-(By-Ty)*v/ymax;
+  const defs=el('defs',{},s),gr=el('linearGradient',{id:'gArea',x1:0,y1:0,x2:0,y2:1},defs);
+  el('stop',{offset:0,style:`stop-color:${tok('--sky')};stop-opacity:.45`},gr);el('stop',{offset:1,style:`stop-color:${tok('--sky')};stop-opacity:0`},gr);
+  for(let v=0;v<=ymax;v+=100){el('line',{x1:Lx,y1:y(v),x2:Rx,y2:y(v),style:`stroke:${tok('--line')};stroke-width:1.5`},s);el('text',{x:Lx-12,y:y(v)+7,'text-anchor':'end'},s,v);}
+  [2,5,10,20,50,100,150].forEach(k=>el('text',{x:x(k),y:By+34,'text-anchor':'middle'},s,k));
+  el('text',{x:(Lx+Rx)/2,y:By+70,'text-anchor':'middle'},s,tr('ch.x'));
+  el('text',{x:Lx,y:Ty-4,'text-anchor':'start'},s,tr('ch.y'));
+  el('line',{x1:Lx,y1:y(357),x2:Rx,y2:y(357),style:`stroke:${tok('--steel')};stroke-width:3;stroke-dasharray:12 9`},s);
+  el('text',{x:Rx,y:y(357)-12,'text-anchor':'end',style:`fill:${tok('--steel')};font-weight:700`},s,tr('ch.claim'));
+  let d='';sp.forEach((k,i)=>d+=(i?'L':'M')+x(k).toFixed(1)+' '+y(vals[i]).toFixed(1));
+  el('path',{d:d+`L${x(150)} ${By}L${x(2)} ${By}Z`,style:'fill:url(#gArea)'},s);
+  el('path',{d,style:`fill:none;stroke:rgba(11,31,77,.25);stroke-width:9;stroke-linejoin:round;stroke-linecap:round`,transform:'translate(2 5)'},s);
+  el('path',{d,style:`fill:none;stroke:${tok('--sky')};stroke-width:7;stroke-linejoin:round;stroke-linecap:round`},s);
+  el('path',{d,style:'fill:none;stroke:#fff;stroke-opacity:.6;stroke-width:2;stroke-linejoin:round',transform:'translate(-1 -2)'},s);
+  const mark=(km,txt,c)=>{const v=interpLog(sp,vals,km);el('line',{x1:x(km),y1:y(v),x2:x(km),y2:By,style:`stroke:${c};stroke-width:2.5;stroke-dasharray:4 5`},s);
+    el('use',{href:'#gem',x:x(km)-20,y:y(v)-20,width:40,height:40},s);
+    el('text',{x:x(km)+(km>50?-26:26),y:y(v)-26,'text-anchor':km>50?'end':'start',style:`fill:${c};font-weight:700;font-size:22px`},s,txt+' ≈ '+nf(v));};
+  mark(5.6,tr('ch.case'),tok('--steel'));mark(111,tr('ch.ktz'),tok('--sun-2'));
+}
+
+/* ---------- симулятор ---------- */
+const ids=['len','stops','vmax','temp','regen','tariff','akm','prem','rate','years','esc','disc'];
+const read=()=>{const o={};ids.forEach(i=>o[i]=parseFloat($(i).value)||0);return o;};
+const setVals=p=>Object.entries(p).forEach(([k,v])=>$(k).value=v);
+let S=null;
+function compute(){
+  const p=read(),Lk=p.len,n=Math.round(p.stops),seg=Lk*1000/(n+1),rho=rhoAt(p.temp);
+  const a=segment(M_AL,seg,p.vmax/3.6,p.regen/100,rho),s=segment(M_ST,seg,p.vmax/3.6,p.regen/100,rho);
+  const kA=a.e*(n+1)/3.6e6/Lk,kS=s.e*(n+1)/3.6e6/Lk,mwh=(kS-kA)*p.akm/1000,save=mwh*1000*p.tariff,prem=p.prem*p.rate;
+  const g=p.esc/100,r=p.disc/100,Y=Math.round(p.years);let cum=-prem,dcum=-prem,pay=null,dpay=null;const rows=[[0,cum,dcum]];
+  for(let t=1;t<=Y;t++){const st=save*Math.pow(1+g,t-1),dt=st/Math.pow(1+r,t),pc=cum,pd=dcum;cum+=st;dcum+=dt;
+    if(pay===null&&cum>=0)pay=t-1+(-pc)/st;if(dpay===null&&dcum>=0)dpay=t-1+(-pd)/dt;rows.push([t,cum,dcum]);}
+  S={p,L:Lk,n,seg,a,s,kA,kS,mwh,save,prem,pay,dpay,cum,dcum,rows,Y};render();
+}
+const fy=y=>y===null?D().dash:(y<1?nf(y*12,0)+' '+U().mo:nf(y,1)+' '+U().yr);
+function render(){
+  const p=S.p,u=U(),d=D();
+  $('lenO').textContent=nf(p.len)+' '+u.km;$('stopsO').textContent=Math.round(p.stops)+', '+d.every+' '+nf(S.seg/1000,S.seg<10000?1:0)+' '+u.km;
+  $('vmaxO').textContent=p.vmax+' '+u.kmh;$('tempO').textContent=(p.temp>0?'+':'')+p.temp+' °C';$('regenO').textContent=p.regen+' %';
+  $('tariffO').textContent=p.tariff+' '+u.tkwh;$('akmO').textContent=nf(p.akm)+' '+u.km;$('yearsO').textContent=Math.round(p.years)+' '+u.yr;
+  $('escO').textContent=nf(p.esc,1)+' %';$('discO').textContent=nf(p.disc,1)+' %';
+  $('kMwh').textContent=nf(S.mwh)+' '+u.mwh;$('kMwhS').textContent=nf(100*(S.kS-S.kA)/S.kS,1)+' '+d.pctSteel;
+  $('kMoney').textContent=nf(S.save/1e6,1)+' '+u.mln;$('kMoneyS').textContent=d.prem+' '+nf(S.prem/1e6,1)+' '+u.mln;
+  $('kPay').textContent=S.pay===null?d.no:fy(S.pay);$('kPayS').textContent=d.disc+': '+(S.dpay===null?d.nodisc:fy(S.dpay));
+  $('kNpv').textContent=(S.dcum>=0?'+':'')+nf(S.dcum/1e6,0)+' '+u.mln;$('kNpvS').textContent=d.disc+'; '+d.und+' '+nf(S.cum/1e6,0);
+  const v=$('verdict');
+  if(S.dpay!==null&&S.dpay<=S.Y){v.style.setProperty('--v1','#2fc07b');v.style.setProperty('--v2','#0f7a48');$('vIc').textContent='✓';$('vBig').textContent=d.good+fy(S.dpay);$('vWhy').textContent=d.goodW;}
+  else if(S.pay!==null&&S.pay<=S.Y){v.style.setProperty('--v1','#ffc629');v.style.setProperty('--v2','#c77b00');$('vIc').textContent='!';$('vBig').textContent=d.warn;$('vWhy').textContent=d.warnW(fy(S.pay),S.Y);}
+  else{v.style.setProperty('--v1','#ff6b5e');v.style.setProperty('--v2','#b02a20');$('vIc').textContent='×';$('vBig').textContent=d.bad;$('vWhy').textContent=d.badW(S.Y);}
+  drawRoute(0);drawProfile(-1);drawCum();drawSens();$('cA').textContent='0 '+u.kwh;$('cS').textContent='0 '+u.kwh;
+}
+function drawRoute(pr){
+  const s=$('route');s.innerHTML='';const x0=34,x1=966,y=58,N=S.n+2;
+  el('line',{x1:x0,y1:y+4,x2:x1,y2:y+4,style:'stroke:rgba(11,31,77,.25);stroke-width:12;stroke-linecap:round'},s);
+  el('line',{x1:x0,y1:y,x2:x1,y2:y,style:`stroke:${tok('--navy-2')};stroke-width:10;stroke-linecap:round`},s);
+  el('line',{x1:x0,y1:y-2,x2:x1,y2:y-2,style:'stroke:#fff;stroke-opacity:.35;stroke-width:2;stroke-linecap:round'},s);
+  for(let i=0;i<N;i++){const x=x0+(x1-x0)*i/(N-1),r=(i===0||i===N-1)?19:12;el('use',{href:'#gem',x:x-r,y:y-r,width:2*r,height:2*r},s);}
+  el('text',{x:x0,y:y+58,'text-anchor':'start'},s,D().km0);el('text',{x:x1,y:y+58,'text-anchor':'end'},s,nf(S.L)+' '+U().km);
+  el('text',{x:500,y:y+58,'text-anchor':'middle'},s,S.n+' '+D().stops);
+  const px=x0+(x1-x0)*pr;
+  el('rect',{x:px-34,y:y-48,width:68,height:16,rx:8,style:'fill:url(#gSteel)'},s);
+  el('rect',{x:px-34,y:y-30,width:68,height:16,rx:8,style:'fill:url(#gSky)'},s);
+}
+function drawProfile(xIn){
+  const s=$('prof');s.innerHTML='';const Lx=64,Rx=980,Ty=12,By=180,seg=S.seg,vm=S.p.vmax/3.6;
+  const sx=x=>Lx+(Rx-Lx)*x/seg,sy=v=>By-(By-Ty)*v/(vm*1.08);
+  [0,Math.round(S.p.vmax/20)*10,S.p.vmax].forEach(t=>{const yy=sy(t/3.6);el('line',{x1:Lx,y1:yy,x2:Rx,y2:yy,style:`stroke:${tok('--line')};stroke-width:1.5`},s);el('text',{x:Lx-10,y:yy+7,'text-anchor':'end'},s,t);});
+  el('text',{x:Lx,y:By+34,'text-anchor':'start'},s,'0');el('text',{x:Rx,y:By+34,'text-anchor':'end'},s,nf(seg/1000,seg<10000?1:0)+' '+U().km);
+  el('text',{x:(Lx+Rx)/2,y:By+34,'text-anchor':'middle'},s,D().speed);
+  let d='';S.a.prof.forEach(([x,v],i)=>d+=(i?'L':'M')+sx(x).toFixed(1)+' '+sy(v).toFixed(1));
+  el('path',{d:d+`L${Rx} ${By}L${Lx} ${By}Z`,style:`fill:${tok('--sky')};fill-opacity:.16`},s);
+  el('path',{d,style:`fill:none;stroke:${tok('--sky')};stroke-width:5;stroke-linejoin:round`},s);
+  if(xIn>=0){const v=interp(S.a.prof,xIn);el('line',{x1:sx(xIn),y1:Ty,x2:sx(xIn),y2:By,style:`stroke:${tok('--sun')};stroke-width:3`},s);el('use',{href:'#gem',x:sx(xIn)-14,y:sy(v)-14,width:28,height:28},s);}
+}
+const niceStep=(r,t)=>{const raw=r/t,p=Math.pow(10,Math.floor(Math.log10(raw))),f=raw/p;return(f<1.5?1:f<3?2:f<7?5:10)*p;};
+function drawCum(){
+  const s=$('cum');s.innerHTML='';const Lx=90,Rx=975,Ty=16,By=330,rows=S.rows,Y=S.Y;
+  let lo=Math.min(...rows.map(r=>Math.min(r[1],r[2])))/1e6,hi=Math.max(0,...rows.map(r=>Math.max(r[1],r[2])))/1e6;if(hi-lo<1)hi+=1;
+  const st=niceStep(hi-lo,5);lo=Math.floor(lo/st)*st;hi=Math.ceil(hi/st)*st;
+  const sx=t=>Lx+(Rx-Lx)*t/Y,sy=v=>By-(By-Ty)*(v-lo)/(hi-lo);
+  for(let v=lo;v<=hi+1e-9;v+=st){const z=Math.abs(v)<1e-9;el('line',{x1:Lx,y1:sy(v),x2:Rx,y2:sy(v),style:`stroke:${z?tok('--ink'):tok('--line')};stroke-width:${z?2.5:1.5}`},s);el('text',{x:Lx-12,y:sy(v)+7,'text-anchor':'end'},s,nf(v,st<1?1:0));}
+  const xs=Y<=12?1:Y<=25?5:10;for(let t=0;t<Y;t+=xs)el('text',{x:sx(t),y:By+34,'text-anchor':t===0?'start':'middle'},s,t);
+  el('text',{x:Rx,y:By+34,'text-anchor':'end'},s,Y+' '+U().yr);
+  const line=(i,c)=>{let d='';rows.forEach((r,k)=>d+=(k?'L':'M')+sx(r[0]).toFixed(1)+' '+sy(r[i]/1e6).toFixed(1));
+    el('path',{d,style:'fill:none;stroke:rgba(11,31,77,.22);stroke-width:9;stroke-linejoin:round;stroke-linecap:round',transform:'translate(2 5)'},s);
+    el('path',{d,style:`fill:none;stroke:${c};stroke-width:6;stroke-linejoin:round;stroke-linecap:round`},s);
+    const l=rows[rows.length-1];el('circle',{cx:sx(l[0]),cy:sy(l[i]/1e6),r:8,style:`fill:${c}`},s);};
+  line(1,tok('--sky'));line(2,tok('--sun'));
+  [S.pay,S.dpay].forEach(y=>{if(y!==null&&y<=Y)el('use',{href:'#gem',x:sx(y)-17,y:sy(0)-17,width:34,height:34},s);});
+}
+function drawSens(){
+  const d=D(),u=U(),trf=[...new Set([20,35,50,Math.round(S.p.tariff),140])].sort((a,b)=>a-b),g=S.p.esc/100,r=S.p.disc/100;
+  let h='<thead><tr><th>'+d.thT+'</th><th>'+d.thS+'</th><th>'+d.thP+'</th><th>'+d.thR(S.Y)+'</th></tr></thead><tbody>';
+  trf.forEach(t=>{const sv=S.mwh*1000*t,pay=sv>0?S.prem/sv:null;let dd=-S.prem;for(let y=1;y<=S.Y;y++)dd+=sv*Math.pow(1+g,y-1)/Math.pow(1+r,y);
+    const ok=dd>=0,mid=!ok&&pay!==null&&pay<=S.Y;
+    h+='<tr'+(t===Math.round(S.p.tariff)?' class="cur"':'')+'><td>'+t+(t===140?' ('+d.pl+')':'')+'</td><td>'+nf(sv/1e6,1)+' '+u.mln+'</td><td>'+(pay===null?d.dash:fy(pay))+'</td><td>'+(dd>=0?'+':'')+nf(dd/1e6,0)+' '+u.mln+'<span class="pill '+(ok?'p-good':mid?'p-warn':'p-bad')+'">'+(ok?d.ok:mid?d.mid:d.nok)+'</span></td></tr>';});
+  $('sens').innerHTML=h+'</tbody>';
+}
+let anim=null;
+function play(){
+  if(anim)cancelAnimationFrame(anim);
+  const dur=matchMedia('(prefers-reduced-motion: reduce)').matches?1:7000,t0=performance.now(),total=S.L*1000,seg=S.seg,u=U();
+  const step=now=>{const pr=Math.min((now-t0)/dur,1),Dd=pr*total,idx=Math.min(Math.floor(Dd/seg),S.n),xIn=Math.min(Dd-idx*seg,seg);
+    $('cA').textContent=nf((idx*S.a.e+interp(S.a.cum,xIn))/3.6e6)+' '+u.kwh;$('cS').textContent=nf((idx*S.s.e+interp(S.s.cum,xIn))/3.6e6)+' '+u.kwh;
+    drawRoute(pr);drawProfile(xIn);anim=pr<1?requestAnimationFrame(step):null;};
+  anim=requestAnimationFrame(step);
+}
+
+/* ---------- запуск ---------- */
+function all(){applyText();drawSpacing();if(S)render();}
+setVals({...PRESETS.long,prem:400000,rate:116.66,years:30,esc:2,disc:8});
+document.querySelectorAll('.lang button').forEach(b=>b.addEventListener('click',()=>{L=b.dataset.lang;try{localStorage.setItem('esep-lang',L);}catch(e){}all();}));
+$('preset').addEventListener('change',e=>{const p=PRESETS[e.target.value];if(p)setVals(p);compute();});
+let tm=null;ids.forEach(i=>$(i).addEventListener('input',()=>{if(['len','stops','vmax','temp','regen','tariff','akm'].includes(i))$('preset').value='custom';clearTimeout(tm);tm=setTimeout(compute,60);}));
+$('play').addEventListener('click',play);
+const re=()=>{drawSpacing();if(S)render();};
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',re);
+new MutationObserver(re).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+applyText();bands();coaches();drawSpacing();compute();ornament();
+})();
+</script>
+
+</body>
+</html>
